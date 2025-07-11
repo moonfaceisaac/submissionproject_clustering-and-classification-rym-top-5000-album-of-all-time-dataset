@@ -1,0 +1,483 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "fKADPWcFKlj3"
+      },
+      "source": [
+        "# **1. Import Library**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "LgA3ERnVn84N"
+      },
+      "source": [
+        "Pada tahap ini, Anda perlu mengimpor beberapa pustaka (library) Python yang dibutuhkan untuk analisis data dan pembangunan model machine learning."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 9,
+      "metadata": {
+        "id": "BlmvjLY9M4Yj"
+      },
+      "outputs": [],
+      "source": [
+        "import pandas as pd \n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt \n",
+        "# from sklearn.preprocessing import StandardScaler, LabelEncoder\n",
+        "# from sklearn.preprocessing import MinMaxScaler\n",
+        "import seaborn as sns\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler\n",
+        "from sklearn.neighbors import KNeighborsClassifier\n",
+        "from sklearn.tree import DecisionTreeClassifier\n",
+        "from sklearn.ensemble import RandomForestClassifier\n",
+        "from sklearn.svm import SVC\n",
+        "from sklearn.naive_bayes import GaussianNB\n",
+        "from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "f3YIEnAFKrKL"
+      },
+      "source": [
+        "# **2. Memuat Dataset dari Hasil Clustering**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Ey3ItwTen_7E"
+      },
+      "source": [
+        "Memuat dataset hasil clustering dari file CSV ke dalam variabel DataFrame."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 10,
+      "metadata": {
+        "id": "GHCGNTyrM5fS"
+      },
+      "outputs": [],
+      "source": [
+        "data = pd.read_csv(\"Dataset_clustering.csv\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "KkPem5eWL2UP"
+      },
+      "source": [
+        "# **3. Data Splitting**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "YYj1rl_JNI9Y"
+      },
+      "source": [
+        "Tahap Data Splitting bertujuan untuk memisahkan dataset menjadi dua bagian: data latih (training set) dan data uji (test set)."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 11,
+      "metadata": {
+        "id": "OubAW-7ONKVj"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "Training set shape: X_train=(4000, 6), y_train=(4000,)\n",
+            "Test set shape: X_test=(1000, 6), y_test=(1000,)\n"
+          ]
+        }
+      ],
+      "source": [
+        "scaler = MinMaxScaler()\n",
+        "# Normalisasi  kolom numerik\n",
+        "numeric_columns = data.select_dtypes(include=['int64', 'float64']).columns\n",
+        "data[numeric_columns] = scaler.fit_transform(data[numeric_columns])\n",
+        "# Pisahkan fitur (X) dan target (y)\n",
+        "X = data[numeric_columns].drop(columns=['Cluster'])\n",
+        "y = data['Cluster']\n",
+        "# Split data menjadi set pelatihan dan set uji\n",
+        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+        " \n",
+        "# Tampilkan bentuk set pelatihan dan set uji untuk memastikan split\n",
+        "print(f\"Training set shape: X_train={X_train.shape}, y_train={y_train.shape}\")\n",
+        "print(f\"Test set shape: X_test={X_test.shape}, y_test={y_test.shape}\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "IVPbB03CMhTT"
+      },
+      "source": [
+        "# **4. Membangun Model Klasifikasi**\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Ned1pL9zMmBK"
+      },
+      "source": [
+        "## **a. Membangun Model Klasifikasi**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "WAWzPOE4Nkti"
+      },
+      "source": [
+        "Setelah memilih algoritma klasifikasi yang sesuai, langkah selanjutnya adalah melatih model menggunakan data latih.\n",
+        "\n",
+        "Berikut adalah rekomendasi tahapannya.\n",
+        "1. Pilih algoritma klasifikasi yang sesuai, seperti Logistic Regression, Decision Tree, Random Forest, atau K-Nearest Neighbors (KNN).\n",
+        "2. Latih model menggunakan data latih."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 12,
+      "metadata": {
+        "id": "4JYxBe87NLDk"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "selesai.\n"
+          ]
+        }
+      ],
+      "source": [
+        "\n",
+        "dt = DecisionTreeClassifier().fit(X_train, y_train)\n",
+        "rf = RandomForestClassifier().fit(X_train, y_train)\n",
+        "\n",
+        " \n",
+        "print(\"selesai.\")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "seYoHNY3XU1y"
+      },
+      "source": [
+        "Tulis narasi atau penjelasan algoritma yang Anda gunakan."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "1. Decision Tree (Pohon Keputusan)\n",
+        "\n",
+        "Decision Tree adalah algoritma pembelajaran yang berbasis pohon (tree-based learning) yang digunakan untuk klasifikasi dan regresi. Algoritma ini bekerja dengan membagi dataset menjadi cabang-cabang berdasarkan fitur tertentu hingga mencapai keputusan akhir.\n",
+        "\n",
+        "📌 Cara Kerja\n",
+        "\n",
+        "    Memilih fitur terbaik sebagai node akar menggunakan metrik seperti Gini Index atau Entropy (Information Gain).\n",
+        "\n",
+        "    Membagi dataset berdasarkan nilai fitur yang dipilih, sehingga terbentuk cabang-cabang keputusan.\n",
+        "\n",
+        "    Proses ini berulang hingga semua data terklasifikasi dengan baik atau memenuhi kondisi penghentian (misalnya, jumlah data dalam node terlalu sedikit).\n",
+        "\n",
+        "    Hasil akhirnya adalah struktur pohon dengan daun sebagai keputusan akhir.\n",
+        "\n",
+        "\n",
+        "### Kelebihan\n",
+        " Mudah dipahami dan diinterpretasikan.\n",
+        " Dapat menangani data kategorikal dan numerik.\n",
+        " Tidak membutuhkan banyak pemrosesan data (preprocessing).\n",
+        "\n",
+        "\n",
+        "### Kekurangan\n",
+        " Cenderung overfitting pada data training.\n",
+        " Sensitif terhadap perubahan kecil dalam data.\n",
+        " Tidak selalu menghasilkan performa terbaik pada dataset yang kompleks.\n",
+        "\n",
+        "2. Random Forest\n",
+        "\n",
+        "Random Forest adalah ensemble learning yang terdiri dari banyak Decision Tree. Algoritma ini menggabungkan hasil dari banyak pohon keputusan untuk menghasilkan prediksi yang lebih akurat dan stabil.\n",
+        "\n",
+        "📌 Cara Kerja\n",
+        "\n",
+        "    Membuat banyak Decision Tree dari subset data yang dipilih secara acak (bootstrap sampling).\n",
+        "\n",
+        "    Setiap pohon hanya menggunakan sebagian fitur yang dipilih secara acak (feature randomness).\n",
+        "\n",
+        "    Untuk klasifikasi, hasil akhir dipilih berdasarkan voting mayoritas dari semua pohon.\n",
+        "\n",
+        "    Untuk regresi, hasil akhir diambil dari rata-rata prediksi semua pohon.\n",
+        "\n",
+        "### Kelebihan\n",
+        "Lebih akurat dibandingkan Decision Tree tunggal.\n",
+        "Lebih tahan terhadap overfitting karena menggunakan banyak pohon.\n",
+        "Bisa menangani data besar dengan banyak fitur.\n",
+        "\n",
+        "### Kekurangan\n",
+        "Memerlukan lebih banyak sumber daya komputasi dibanding Decision Tree.\n",
+        "Interpretasi hasil lebih sulit dibanding Decision Tree tunggal.\n",
+        "Bisa lebih lambat untuk dataset yang sangat besar.\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ergzChZFEL-O"
+      },
+      "source": [
+        "## **b. Evaluasi Model Klasifikasi**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "zOm68u-7NpLT"
+      },
+      "source": [
+        "Berikut adalah **rekomendasi** tahapannya.\n",
+        "1. Lakukan prediksi menggunakan data uji.\n",
+        "2. Hitung metrik evaluasi seperti Accuracy dan F1-Score (Opsional: Precision dan Recall).\n",
+        "3. Buat confusion matrix untuk melihat detail prediksi benar dan salah."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 13,
+      "metadata": {
+        "id": "tMq4QAssNLip"
+      },
+      "outputs": [
+        {
+          "name": "stdout",
+          "output_type": "stream",
+          "text": [
+            "                Model  Accuracy  Precision    Recall  F1-Score\n",
+            "0  Decision Tree (DT)     0.994   0.977778  0.956522  0.967033\n",
+            "1  Random Forest (RF)     0.996   0.988889  0.967391  0.978022\n"
+          ]
+        }
+      ],
+      "source": [
+        "\n",
+        "def evaluate_model(model, X_test, y_test):\n",
+        "    y_pred = model.predict(X_test)\n",
+        "    cm = confusion_matrix(y_test, y_pred)\n",
+        "    tn, fp, fn, tp = cm.ravel()\n",
+        "    results = {\n",
+        "        'Confusion Matrix': cm,\n",
+        "        'True Positive (TP)': tp,\n",
+        "        'False Positive (FP)': fp,\n",
+        "        'False Negative (FN)': fn,\n",
+        "        'True Negative (TN)': tn,\n",
+        "        'Accuracy': accuracy_score(y_test, y_pred),\n",
+        "        'Precision': precision_score(y_test, y_pred),\n",
+        "        'Recall': recall_score(y_test, y_pred),\n",
+        "        'F1-Score': f1_score(y_test, y_pred)\n",
+        "    }\n",
+        "    return results\n",
+        "    \n",
+        "\n",
+        "results = {\n",
+        "    'Decision Tree (DT)': evaluate_model(dt, X_test, y_test),\n",
+        "    'Random Forest (RF)': evaluate_model(rf, X_test, y_test),\n",
+        "\n",
+        "}\n",
+        "    \n",
+        "\n",
+        "summary_df = pd.DataFrame(columns=['Model', 'Accuracy', 'Precision', 'Recall', 'F1-Score'])\n",
+        "    \n",
+        "\n",
+        "rows = []\n",
+        "for model_name, metrics in results.items():\n",
+        "    rows.append({\n",
+        "        'Model': model_name,\n",
+        "        'Accuracy': metrics['Accuracy'],\n",
+        "        'Precision': metrics['Precision'],\n",
+        "        'Recall': metrics['Recall'],\n",
+        "        'F1-Score': metrics['F1-Score']\n",
+        "    })\n",
+        "    \n",
+        "\n",
+        "summary_df = pd.DataFrame(rows)\n",
+        "    \n",
+        "\n",
+        "print(summary_df)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "H4_9OwrsXZlz"
+      },
+      "source": [
+        "Tulis hasil evaluasi algoritma yang digunakan, jika Anda menggunakan 2 algoritma, maka bandingkan hasilnya."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Klasifikasi Decision Tree :\n",
+        "Model Menunjukkan 99% pada Accuracy, 97% pada Precision, 95% pada Recall, dan 96% pada F1-Score\n",
+        "Ini menunjukkan bahwa menggunakan algoritma decision tree sudah cukup baik dalam dataset ini. Namun tidak sebaik random forest, dimana kelemahan tersebut ditungukkan di value pada precision dan f1-score yang lebih rendah dibandingkan dengan random forest.\n",
+        "\n",
+        "Klasifikasi  Random Forest :\n",
+        "Model Menunjukkan 99% pada Accuracy, 98% pada Precision, 95% pada Recall, dan 97% pada F1-Score\n",
+        "Ini menunjukkan bahwa menggunakan algoritma random forest lebih baik digunakan didalam dataset ini. "
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ph9yIYDXEPuB"
+      },
+      "source": [
+        "## **c. Tuning Model Klasifikasi (Optional)**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "-Bikx3LINv5e"
+      },
+      "source": [
+        "Gunakan GridSearchCV, RandomizedSearchCV, atau metode lainnya untuk mencari kombinasi hyperparameter terbaik"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 14,
+      "metadata": {
+        "id": "winbFzb8NL95"
+      },
+      "outputs": [],
+      "source": [
+        "#Type your code here"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "hE7pqlEPEYzI"
+      },
+      "source": [
+        "## **d. Evaluasi Model Klasifikasi setelah Tuning (Optional)**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "feaPESoeN0zz"
+      },
+      "source": [
+        "Berikut adalah rekomendasi tahapannya.\n",
+        "1. Gunakan model dengan hyperparameter terbaik.\n",
+        "2. Hitung ulang metrik evaluasi untuk melihat apakah ada peningkatan performa."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 15,
+      "metadata": {
+        "id": "HTXZRvEeNMb1"
+      },
+      "outputs": [],
+      "source": [
+        "#Type your code here"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "ZRsOdm4uEgAW"
+      },
+      "source": [
+        "## **e. Analisis Hasil Evaluasi Model Klasifikasi**"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Hm3BhSi6N4_l"
+      },
+      "source": [
+        "Berikut adalah **rekomendasi** tahapannya.\n",
+        "1. Bandingkan hasil evaluasi sebelum dan setelah tuning (jika dilakukan).\n",
+        "2. Identifikasi kelemahan model, seperti:\n",
+        "  - Precision atau Recall rendah untuk kelas tertentu.\n",
+        "  - Apakah model mengalami overfitting atau underfitting?\n",
+        "3. Berikan rekomendasi tindakan lanjutan, seperti mengumpulkan data tambahan atau mencoba algoritma lain jika hasil belum memuaskan.\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "# Analisis Hasil Evaluasi Model Klasifikasi\n",
+        "\n",
+        "Klasifikasi Decision Tree :\n",
+        "Model Menunjukkan 99% pada Accuracy, 97% pada Precision, 95% pada Recall, dan 96% pada F1-Score\n",
+        "Ini menunjukkan bahwa menggunakan algoritma decision tree sudah cukup baik dalam dataset ini. Namun tidak sebaik random forest, dimana kelemahan tersebut ditungukkan di value pada precision dan f1-score yang lebih rendah dibandingkan dengan random forest.\n",
+        "\n",
+        "Klasifikasi  Random Forest :\n",
+        "Model Menunjukkan 99% pada Accuracy, 98% pada Precision, 95% pada Recall, dan 97% pada F1-Score\n",
+        "Ini menunjukkan bahwa menggunakan algoritma random forest lebih baik digunakan didalam dataset ini. \n",
+        "\n",
+        "Model tidak mengalami overfitting ataupun underfitting\n",
+        "\n",
+        "\n",
+        "Saya menggunakan model decision tree dan random forest karena memang tertarik dengan kemiripan secara struktur, dimana mereka terstruktur seperti pohon. Namun, random forest memiliki depth yang lebih dalam dan lebih komprehensif. Maka dariada itu saya ingin meninjau apakah terdapat perbedaan yang cukup signifikan antara mereka.\n",
+        "\n",
+        "Setelah saya lakukan klasifikasi dengan kedua model, tidak ada perbedaan yang terlalu signifikan. Kedua algoritma memiliki performa yang sangat baik ditunjukkan oleh keempat metrik yang sebelumnya telah diperlihatkan (Accuracy, Precision, Recall, dan F1-Score) dimana keempat metrik tersebut meraih nilai lebih dari 90%. Tidak hanya itu, decision tree melampaui ekspektasi saya karena dapat mengimbangi random forest walaupun dengan kelemahannya yang tidak dapat manangani outliers sebaik random forest dalam kasus pada umumnya.\n",
+        "\n",
+        "Hasil sudah memuaskan. Namun, mungkin untuk selanjutnya saya akan lebih memilih dataset yang memiliki standar deviasi yang lebih rendah untuk memudahkan preprocessing data pada kolom numerikal dan memperluas jumlah cluster untuk lebih menunjukkan perbedaan yang signifikan pada kedua algoritma\n",
+        "\n"
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.11.1"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
